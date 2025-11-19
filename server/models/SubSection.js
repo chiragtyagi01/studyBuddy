@@ -20,5 +20,4 @@ const subSectionSchema = new mongoose.Schema({
 });
 
 // Export the model safely
-module.exports =
-    mongoose.models.SubSection || mongoose.model('Subsection', subSectionSchema);
+module.exports = mongoose.model('Subsection', subSectionSchema);

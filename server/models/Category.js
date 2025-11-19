@@ -1,7 +1,7 @@
 const mongoose =require('mongoose');
 
 exports.categorySchema=new mongoose.Schema({
-    categoryName:{
+    name:{
         type:String,
         required:true,
         trim:true
@@ -12,7 +12,6 @@ exports.categorySchema=new mongoose.Schema({
     course:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Course',
-        required:true
     }
 });
 

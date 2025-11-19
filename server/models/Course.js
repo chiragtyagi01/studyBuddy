@@ -43,9 +43,7 @@ exports.courseSchema=new mongoose.Schema({
         trim:true
     },
     tag:{
-        type:String,
-        ref:'Tag',
-        required:true,
+        type:[String],
         trim:true
     },
     studentsEnrolled:[
@@ -54,7 +52,23 @@ exports.courseSchema=new mongoose.Schema({
             ref:'User',
             required:true
         }
-    ]
+    ],
+    category:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Category',
+    },
+    instructions:{
+        type:[String],
+    },
+    status:{
+        type:String,
+        enum:['Draft','Published'],
+        default:'Draft'
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
 
 });
 

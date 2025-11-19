@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { resetPasswordToken } = require('../controllers/ResetPassword');
+// const { resetPasswordToken } = require('../controllers/ResetPassword');
 
 const userSchema =new mongoose.Schema({
     firstName:{
@@ -28,6 +28,14 @@ const userSchema =new mongoose.Schema({
         default:'Student',
         required:true
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    approved: {
+      type: Boolean,
+      default: true,
+    },
     additionalDetails:{
         type:mongoose.Schema.Types.ObjectId,
         required: true,
@@ -42,7 +50,7 @@ const userSchema =new mongoose.Schema({
     image:{
         type:String,
         default:'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-        required:true
+        // required:true
     },
     token:{
         type:String,
@@ -57,7 +65,12 @@ const userSchema =new mongoose.Schema({
         }
     ]
 
-});
+},
+{
+    // Add timestamps for when the document is created and last modified
+    timestamps:true
+}
+);
 
 module.exports=mongoose.model('User',userSchema);
 

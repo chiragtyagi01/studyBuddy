@@ -1,14 +1,16 @@
 const User = require('../models/User');
 const mailSender = require('../utils/mailSender');
+const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 // resetPassword token
 exports.resetPasswordToken = async (req, res) => {
     // extract email from request body
-    const { email } = req.body;
+    const email = req.body.email;
     try {
         // check if user exists
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email:email });
         if (!existingUser) {
             return res.status(401).json({
                 success: false,
@@ -17,10 +19,12 @@ exports.resetPasswordToken = async (req, res) => {
         }
         //generate token
         const token = crypto.randomUUID();
+        // const token = crypto.randomBytes(20).toString("hex")
         //set token and expiry on user model
-        const updateDetails = await User.findByIdAndUpdate({email:email}, {
+        const updateDetails = await User.findByIdAndUpdate(existingUser._id, 
+        {
             token: token,
-            resetPasswordExpires: Date.now() + 5*60*1000 // 5 minutes from now
+            resetPasswordExpires: Date.now() + 10*60*1000 // 10 minutes from now
         }, { new: true });
         //create reset password url
         const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
@@ -29,7 +33,7 @@ exports.resetPasswordToken = async (req, res) => {
             const mailResponse = await mailSender(
                 email,
                 "Reset your password",
-                `Click the link to reset your password: ${resetPasswordUrl}. This link is valid for 5 minutes.`
+                `Click the link to reset your password: ${resetPasswordUrl}. This link is valid for 10 minutes.`
             );
             return res.status(200).json({
                 success: true,
@@ -88,7 +92,7 @@ exports.resetPassword = async (req, res) => {
         const hashedNewPassword = await bcrypt.hash(password,10);
         
         // update user's password and clear reset token fields
-        await User.findByIdAndUpdate(
+        await User.findOneAndUpdate(
             {token:token},
             {password:hashedNewPassword},
             {new:true}
@@ -102,7 +106,7 @@ exports.resetPassword = async (req, res) => {
         //handle error
         return res.status(500).json({
             success: false,
-            message: 'Error in resetPassword controller',
+            message: 'Error in updating the Password',
             error: error.message
         });
     }

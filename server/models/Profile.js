@@ -3,21 +3,20 @@ const mongoose = require('mongoose');
 exports.ProfileSchema = new mongoose.Schema({
     gender:{
         type:String,
-        enum:['Male','Female','Other'],
-        required:true
+        // required:true
     },
     dateOfBirth:{
         type:Date,
-        required:true
+        // required:true
     },
     about:{
         type:String,
-        required:false,
+        // required:false,
         trim:true
     },
     contactNumber:{
-        type:String,
-        required:true,
+        type:Number,
+        // required:true,
         trim:true
     }, 
 });

@@ -6,6 +6,11 @@ exports.courseProgressSchema=new mongoose.Schema({
         ref:'Course',
         required:true
     },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
+        
+    },
     completedVideos:[
         {
             type:mongoose.Schema.Types.ObjectId,

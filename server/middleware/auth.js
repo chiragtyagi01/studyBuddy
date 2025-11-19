@@ -1,4 +1,4 @@
-const jwt = require('json-web-token');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const User = require('../models/User');
 
@@ -14,9 +14,11 @@ exports.auth = async (req, res, next) => {
                 message: 'No token provided'
             });
         }
+        
         try {
         //verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded)
         //attach user to request object
         req.user = decoded;
     } catch (error) {
@@ -26,6 +28,7 @@ exports.auth = async (req, res, next) => {
         });
     }
     next();  
+
     } catch (error) {
         //handle error
         return res.status(500).json({
@@ -39,10 +42,12 @@ exports.auth = async (req, res, next) => {
 //isStudent
 exports.isStudent = async(req, res, next) => {
     try {
-        if(req.user.accountType !== 'Student'){
-            return res.status(403).json({
+        const userDetails = await User.findOne({email: req.user.email});
+        console.log(userDetails);
+        if(userDetails.accountType !== 'Student'){
+            return res.status(401).json({
                 success: false,
-                message: 'Access denied. Students only'
+                message: 'Access denied.This is a Protected Route for Students only'
             });
         }
         next();
@@ -58,10 +63,12 @@ exports.isStudent = async(req, res, next) => {
 //isInstructor
 exports.isInstructor = async(req, res, next) => {
     try {
-        if(req.user.accountType !== 'Instructor'){
+        const userDetails = await User.findOne({email: req.user.email});
+        console.log(userDetails);
+        if(userDetails.accountType !== 'Instructor'){
             return res.status(403).json({
                 success: false,
-                message: 'Access denied. Instructors only'
+                message: 'Access denied. This is a Protected Route for Instructors only'
             });
         }
         next();
@@ -78,10 +85,12 @@ exports.isInstructor = async(req, res, next) => {
 //isAdmin
 exports.isAdmin = async(req, res, next) => {
     try {
-        if(req.user.accountType !== 'Admin'){
+        const userDetails = await User.findOne({email: req.user.email});
+        console.log(userDetails);
+        if(userDetails.accountType !== 'Admin'){
             return res.status(403).json({
                 success: false,
-                message: 'Access denied. Admins only'
+                message: 'Access denied.This is a Protected Route for Admins only'
             }); 
         }
         next();
