@@ -32,7 +32,7 @@ exports.createSection = async(req,res) =>{
         .populate({
             path: 'courseContent',
             populate: {
-                path: 'subSection', // populate subsections inside each section
+                path: 'subSections', // populate subsections inside each section
             },
         })
         .exec();

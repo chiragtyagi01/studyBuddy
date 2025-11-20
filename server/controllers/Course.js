@@ -7,6 +7,8 @@ const { uploadImageToCloudinary } = require("../utils/imageUploader")
 const CourseProgress = require("../models/CourseProgress")
 const { convertSecondsToDuration } = require("../utils/secToDuration")
 
+
+
 // Function to create a new course
 exports.createCourse = async (req, res) => {
   try {
@@ -295,11 +297,11 @@ exports.getCourseDetails = async (req, res) => {
         },
       })
       .populate("category")
-      .populate("ratingAndReviews")
+    //   .populate("ratingAndReviews")
       .populate({
         path: "courseContent",
         populate: {
-          path: "subSection",
+          path: "subSections",
           select: "-videoUrl",
         },
       })
@@ -321,7 +323,7 @@ exports.getCourseDetails = async (req, res) => {
 
     let totalDurationInSeconds = 0
     courseDetails.courseContent.forEach((content) => {
-      content.subSection.forEach((subSection) => {
+      content.subSections.forEach((subSection) => {
         const timeDurationInSeconds = parseInt(subSection.timeDuration)
         totalDurationInSeconds += timeDurationInSeconds
       })

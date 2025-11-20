@@ -28,7 +28,7 @@ exports.courseSchema=new mongoose.Schema({
         {
             type:mongoose.Schema.Types.ObjectId,
             ref:'Section',
-            required:true
+            // required:true
         }
     ],
     ratingAndReviews:[
@@ -39,7 +39,7 @@ exports.courseSchema=new mongoose.Schema({
     ],
     thumbnailImageURL:{
         type:String,
-        required:true,
+        // required:true,
         trim:true
     },
     tag:{
@@ -72,4 +72,4 @@ exports.courseSchema=new mongoose.Schema({
 
 });
 
-exports.module=new mongoose.model('Course',exports.courseSchema);
+module.exports=mongoose.model('Course',exports.courseSchema);

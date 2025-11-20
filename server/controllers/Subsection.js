@@ -1,6 +1,6 @@
 const SubSection =require('../models/Subsection');
 const Section = require('../models/Section');
-const { uploadImageToCloudinary } = require('../utils/imageUploader');
+const { uploadVideoToCloudinary } = require('../utils/videoUploader');
 require('dotenv').config();
 
 //create Subsection
@@ -9,17 +9,25 @@ exports.createSubSection = async(req, res) =>{
         //fetch data
         const {sectionId, title, timeDuration, description}=req.body;
         //extract file
-        const video= req.files?.videoFile;
+        console.log('files recevied',req.files);
+        const video= req.files.videoFile;
+
+          // DEBUG HERE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+        const fs = require("fs");
+        console.log("TEMP FILE PATH:", video.tempFilePath);
+        console.log("EXISTS:", fs.existsSync(video.tempFilePath));
+        console.log("SIZE:", fs.statSync(video.tempFilePath).size);
+        // DEBUG END ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
         //validate data
         if(!sectionId || !title || !timeDuration || !description || !video){
             return res.status(400).json({
                 success:false,
                 message:'All fields are required',
-                error:error.message
             })
         }
         //upload to cloudinary
-        const uploadDetails = await uploadImageToCloudinary(video, process.env.FOLDER_NAME);
+        const uploadDetails = await uploadVideoToCloudinary(video, process.env.FOLDER_NAME);
         //create Subsection
         const subSectionDetails = await SubSection.create({
             title:title,
@@ -31,13 +39,13 @@ exports.createSubSection = async(req, res) =>{
         const updatedSection = await Section.findByIdAndUpdate({_id:sectionId},
             {
                 $push:{
-                    subSection:subSectionDetails._id,
+                    subSections:subSectionDetails._id,
                 }
             },
             {
                 new:true,
             }
-        ).populate('subSection');
+        ).populate('subSections');
         //return response
         return res.status(200).json({
             success:true,
@@ -45,10 +53,12 @@ exports.createSubSection = async(req, res) =>{
             updatedSection,
         })
     } catch (error) {
+        console.log("CLOUDINARY ERROR:", error);
         return res.status(500).json({
-            success:false,
-            message:'Unable to create Subsection',
-            error:error.message
+        success:false,
+        message:'Unable to create Subsection',
+        error: error.message,
+        cloudinary_error: error
         })
     }
 };
